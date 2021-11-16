@@ -28,10 +28,7 @@ unitlindley <- custom_family("unitlindley",
                              links = "logit", 
                              lb = 0, 
                              ub = 1, 
-                             type = "real", 
-                             log_lik = log_lik_unitlindley, 
-                             posterior_epred = posterior_epred_unitlindley,
-                             posterior_predict = posterior_predict_unitlindley)
+                             type = "real")
 # additionally required Stan code
 
 stan_funs <- "
