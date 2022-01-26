@@ -10,25 +10,16 @@ dkumaraswamy <- function(x, md, p, log = FALSE) {
   if (isTRUE(any(p <= 0))) {
     stop("P must be above 0.")
   }
+  res <- log(p) +
+         log(log(2)) -
+         log(- (log1p(-md^p))) +
+         (p - 1) * log(x) +
+         ((- (log(2) / log1p(-md^p))) - 1) * log1p(-x^p)
 
   if (log) {
-    return(
-      log(p) +
-      log(log(2)) -
-      log(- (log1p(-md^p))) +
-      (p - 1) * log(x) +
-      ((- (log(2) / log1p(-md^p))) - 1) * log1p(-x^p)
-    )
+    return(res)
   } else {
-    return(
-      exp(
-        log(p) +
-        log(log(2)) -
-        log(- (log1p(-md^p))) +
-        (p - 1) * log(x) +
-        ((- (log(2) / log1p(-md^p))) - 1) * log1p(-x^p)
-      )
-    )
+    return(exp(res))
   }
 }
 
