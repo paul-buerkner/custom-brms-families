@@ -55,7 +55,7 @@ log_lik_kumaraswamy <- function(i, prep) {
 posterior_predict_kumaraswamy <- function(i, prep, ...) {
   mu <- brms::get_dpar(prep, "mu", i = i)
   p <- brms::get_dpar(prep, "p", i = i)
-  rkumaraswamy(1, mu, p)
+  rkumaraswamy(prep$ndraws, mu, p)
 }
 
 posterior_epred_kumaraswamy <- function(prep) {
