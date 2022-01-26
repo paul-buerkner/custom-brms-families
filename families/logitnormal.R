@@ -8,39 +8,30 @@ logistic <- function(x) {
   1 / (1 + exp(-x))
 }
 
-dlogitnormal <- function(x, md, sigma, log = FALSE){
+dlogitnormal <- function(x, mu, sigma, log = FALSE){
   if (isTRUE(any(x <= 0 || x >= 1))) {
     stop("x must be in (0,1).")
-  }
-  if (isTRUE(any(md <= 0 || md >= 1))) {
-    stop("The median must be in (0,1).")
   }
   if (isTRUE(any(sigma < 0))) {
     stop("sigma must be above or equal to 0.")
   }
+  res <- (- (log(sigma) + 0.5 * (log(2) + log(pi)))) +
+         (- (log(x) + log1p(-x))) +
+         (- (logit(x) - mu)^2) / (2 * (sigma^2))
   if (log) {
-    (- (log(sigma) + 0.5 * (log(2) + log(pi)))) +
-    (- (log(x) + log1p(-x))) +
-    (- (logit(x) - logit(md))^2) / (2 * (sigma^2))
+    return(res)
   }
   else {
-    exp(
-      (- (log(sigma) + 0.5 * (log(2) + log(pi)))) +
-      (- (log(x) + log1p(-x))) +
-      (- (logit(x) - logit(md))^2) / (2 * (sigma^2))
-    )
+    return(exp(res))
   }
 }
 
-rlogitnormal <- function(n, md, sigma) {
-  if (isTRUE(any(md <= 0 || md >= 1))) {
-    stop("The median must be in (0,1).")
-  }
+rlogitnormal <- function(n, mu, sigma) {
   if (isTRUE(any(sigma < 0))) {
     stop("P must be above or equal to 0.")
   }
   return(
-    logistic(rnorm(n, logit(md), sigma))
+    logistic(rnorm(n, logit(mu), sigma))
   )
 }
 
@@ -54,7 +45,7 @@ log_lik_logitnormal <- function(i, prep) {
 posterior_predict_logitnormal <- function(i, prep, ...) {
   mu <- brms::get_dpar(prep, "mu", i = i)
   sigma <- brms::get_dpar(prep, "sigma", i = i)
-  rlogitnormal(1, mu, sigma)
+  rlogitnormal(prep$ndraws, mu, sigma)
 }
 
 posterior_epred_logitnormal <- function(prep) {
