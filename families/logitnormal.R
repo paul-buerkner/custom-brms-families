@@ -54,7 +54,7 @@ log_lik_logitnormal <- function(i, prep) {
 posterior_predict_logitnormal <- function(i, prep, ...) {
   mu <- brms::get_dpar(prep, "mu", i = i)
   sigma <- brms::get_dpar(prep, "sigma", i = i)
-  rlogitnormal(1, mu, sigma)
+  rlogitnormal(prep$ndraws, mu, sigma)
 }
 
 posterior_epred_logitnormal <- function(prep) {
