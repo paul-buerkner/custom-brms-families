@@ -56,17 +56,19 @@ posterior_epred_kumaraswamy <- function(prep) {
   q * beta((1 + 1 / p), q)
 }
 
-kumaraswamy <- custom_family(
-  "kumaraswamy",
-  dpars = c("mu", "p"),
-  links = c("logit", "log"),
-  lb = c(0, 0),
-  ub = c(1, NA),
-  type = "real",
-  log_lik = log_lik_kumaraswamy,
-  posterior_predict = posterior_predict_kumaraswamy,
-  posterior_epred = posterior_epred_kumaraswamy
-)
+kumaraswamy <- function(link = "logit", link_p = "log"){
+  custom_family(
+    "kumaraswamy",
+    dpars = c("mu", "p"),
+    links = c(link, link_p),
+    lb = c(0, 0),
+    ub = c(1, NA),
+    type = "real",
+    log_lik = log_lik_kumaraswamy,
+    posterior_predict = posterior_predict_kumaraswamy,
+    posterior_epred = posterior_epred_kumaraswamy
+  )
+}
 
 stan_kumaraswamy <- "
   real kumaraswamy_lpdf(real y, real mu, real p) {

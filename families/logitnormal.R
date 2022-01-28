@@ -49,21 +49,24 @@ posterior_predict_logitnormal <- function(i, prep, ...) {
 }
 
 posterior_epred_logitnormal <- function(prep) {
+  # https://doi.org/10.1080/03610926.2020.1752723 might solve this
   stop("Due to the mean not having an analytical solution for the logit-normal
         distribution, posterior_epred is currently not supported.")
 }
 
-logitnormal <- custom_family(
-  "logitnormal",
-  dpars = c("mu", "sigma"),
-  links = c("logit", "log"),
-  lb = c(0, 0),
-  ub = c(1, NA),
-  type = "real",
-  log_lik = log_lik_logitnormal,
-  posterior_predict = posterior_predict_logitnormal,
-  posterior_epred = posterior_epred_logitnormal
-)
+logitnormal <- function(link = "identity", link_sigma = "log"){
+  custom_family(
+    "logitnormal",
+    dpars = c("mu", "sigma"),
+    links = c(link, link_sigma),
+    lb = c(0, 0),
+    ub = c(1, NA),
+    type = "real",
+    log_lik = log_lik_logitnormal,
+    posterior_predict = posterior_predict_logitnormal,
+    posterior_epred = posterior_epred_logitnormal
+  )
+}
 
 stan_logitnormal <- "
   real logitnormal_lpdf(real y, real mu, real sigma) {
