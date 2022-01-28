@@ -31,7 +31,7 @@ rlogitnormal <- function(n, mu, sigma) {
     stop("P must be above or equal to 0.")
   }
   return(
-    logistic(rnorm(n, logit(mu), sigma))
+    logistic(rnorm(n, mu, sigma))
   )
 }
 
