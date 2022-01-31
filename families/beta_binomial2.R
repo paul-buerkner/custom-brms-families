@@ -28,18 +28,20 @@ posterior_epred_beta_binomial2 <- function(prep) {
 }
 
 # definition of the custom family
-beta_binomial2 <- custom_family(
-  "beta_binomial2",
-  dpars = c("mu", "phi"),
-  links = c("logit", "log"),
-  lb = c(0, 0),
-  ub = c(1, NA),
-  type = "int",
-   vars = "trials[n]",
-  log_lik = log_lik_beta_binomial2,
-  posterior_predict = posterior_predict_beta_binomial2,
-  posterior_epred = posterior_epred__beta_binomial2
-)
+beta_binomial2 <- function(link = "logit", link_phi = "log") {
+  custom_family(
+    "beta_binomial2",
+    dpars = c("mu", "phi"),
+    links = c(link, link_phi),
+    lb = c(0, 0),
+    ub = c(1, NA),
+    type = "int",
+    vars = "trials[n]",
+    log_lik = log_lik_beta_binomial2,
+    posterior_predict = posterior_predict_beta_binomial2,
+    posterior_epred = posterior_epred__beta_binomial2
+  )
+}
 
 # additionally required Stan code
 stan_beta_binomial2 <- "

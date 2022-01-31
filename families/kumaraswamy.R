@@ -1,10 +1,10 @@
 library(brms)
 
-dkumaraswamy <- function(x, md, p, log = FALSE) {
+dkumaraswamy <- function(x, mu, p, log = FALSE) {
   if (isTRUE(any(x <= 0 || x >= 1))) {
     stop("x must be in (0,1).")
   }
-  if (isTRUE(any(md <= 0 || md >= 1))) {
+  if (isTRUE(any(mu <= 0 || mu >= 1))) {
     stop("The median must be in (0,1).")
   }
   if (isTRUE(any(p <= 0))) {
@@ -12,9 +12,9 @@ dkumaraswamy <- function(x, md, p, log = FALSE) {
   }
   res <- log(p) +
          log(log(2)) -
-         log(- (log1p(-md^p))) +
+         log(- (log1p(-mu^p))) +
          (p - 1) * log(x) +
-         ((- (log(2) / log1p(-md^p))) - 1) * log1p(-x^p)
+         ((- (log(2) / log1p(-mu^p))) - 1) * log1p(-x^p)
 
   if (log) {
     return(res)
@@ -23,14 +23,14 @@ dkumaraswamy <- function(x, md, p, log = FALSE) {
   }
 }
 
-rkumaraswamy <- function(n, md, p) {
-  if (isTRUE(any(md <= 0 || md >= 1))) {
+rkumaraswamy <- function(n, mu, p) {
+  if (isTRUE(any(mu <= 0 || mu >= 1))) {
     stop("The median must be in (0,1).")
   }
   if (isTRUE(any(p <= 0))) {
     stop("P must be above 0.")
   }
-  q <- - (log(2) / log1p(-md^p))
+  q <- - (log(2) / log1p(-mu^p))
   return(
     (1 - (1 - runif(n, min = 0, max = 1))^(1 / q))^(1 / p)
   )
@@ -56,17 +56,19 @@ posterior_epred_kumaraswamy <- function(prep) {
   q * beta((1 + 1 / p), q)
 }
 
-kumaraswamy <- custom_family(
-  "kumaraswamy",
-  dpars = c("mu", "p"),
-  links = c("logit", "log"),
-  lb = c(0, 0),
-  ub = c(1, NA),
-  type = "real",
-  log_lik = log_lik_kumaraswamy,
-  posterior_predict = posterior_predict_kumaraswamy,
-  posterior_epred = posterior_epred_kumaraswamy
-)
+kumaraswamy <- function(link = "logit", link_p = "log"){
+  custom_family(
+    "kumaraswamy",
+    dpars = c("mu", "p"),
+    links = c(link, link_p),
+    lb = c(0, 0),
+    ub = c(1, NA),
+    type = "real",
+    log_lik = log_lik_kumaraswamy,
+    posterior_predict = posterior_predict_kumaraswamy,
+    posterior_epred = posterior_epred_kumaraswamy
+  )
+}
 
 stan_kumaraswamy <- "
   real kumaraswamy_lpdf(real y, real mu, real p) {
