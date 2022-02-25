@@ -8,7 +8,8 @@ log_lik_lognormal_natural <- function(i, prep) {
   if(NCOL(prep$dpars$sigma)==1){sigma <- prep$dpars$sigma}else
   {sigma <- prep$dpars$sigma[, i]}   ## [, i] if sigma is modelled, without otherwise
   y <- prep$data$Y[i]
-  lognormal_natural_lpdf(y, mu, sigma)
+  common_term = log(1+sigma^2/mu^2)
+  Vectorize(dlnorm)(y, log(mu)-common_term/2, sqrt(common_term), log = TRUE)
 }
 
 
@@ -16,7 +17,8 @@ posterior_predict_lognormal_natural <- function(i, prep, ...) {
   mu <- prep$dpars$mu[, i]
   if(NCOL(prep$dpars$sigma)==1){sigma <- prep$dpars$sigma}else
   {sigma <- prep$dpars$sigma[, i]}   ## [, i] if sigma is modelled, without otherwise
-  lognormal_natural_rng(mu, sigma)
+  common_term = log(1+sigma^2/mu^2)
+  rlnorm(n, log(mu)-common_term/2, sqrt(common_term))
 }
 
 posterior_epred_lognormal_natural <- function(prep) {
@@ -56,7 +58,6 @@ brm(data = mtcars, formula = bf(mpg ~ wt),
 brm(data = mtcars, formula = bf(mpg ~ wt, sigma ~ wt), 
     family = lognormal_natural, stanvars = stanvars) -> model_test2
 
-expose_functions(model_test1, vectorize = TRUE) # exposes the Stan functions to R
 model_test1 |> conditional_effects()
 model_test2 |> conditional_effects()
 
