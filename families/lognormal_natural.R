@@ -35,10 +35,14 @@ custom_family(name = "lognormal_natural",
 # additionally required Stan code
 stan_lognormal_natural <- "
   real lognormal_natural_lpdf(real y, real mu, real sigma) {
-    return lognormal_lpdf(y | log(mu/sqrt(1+sigma^2/mu^2)), sqrt(log(1+sigma^2/mu^2)));
+    real common_term = log(1+sigma^2/mu^2);
+    return lognormal_lpdf(y | log(mu)-common_term/2, 
+                              sqrt(common_term));
   }
   real lognormal_natural_rng(real mu, real sigma) {
-    return lognormal_rng(log(mu/sqrt(1+sigma^2/mu^2)), sqrt(log(1+sigma^2/mu^2)));
+    real common_term = log(1+sigma^2/mu^2);
+    return lognormal_rng(log(mu)-common_term/2, 
+                            sqrt(common_term));
   }
 "
 
