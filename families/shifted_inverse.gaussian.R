@@ -3,7 +3,7 @@ library(brms)
 
 #pdf
 dshifted_inv_gaussian <- function(x, mu = 1, shape = 1, shift = 0, log = FALSE) {
-    dinv_gaussian(x-shift, mu, shape)
+    dinv_gaussian(x-shift, mu, shape, log)
 }
 
 #rng
