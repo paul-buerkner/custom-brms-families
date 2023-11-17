@@ -163,8 +163,39 @@ init_fun <- function() {
 
 
 # Required Stan code
-# Stan code provided by Sean Pinkney
-# https://github.com/spinkney/helpful_stan_functions/blob/main/functions/distribution/skew_generalized_t.stanfunctions
+
+# Skew Generalized T Distribution Functions (sgt)
+# This implementation of the Skew Generalized T Distribution (SGT) functions is adapted from the work of Sean Pinkney. The original code and detailed documentation can be found in his GitHub repository:
+#Pinkney, S. (2021). Skew Generalized T Distribution Functions. Retrieved from [https://github.com/spinkney/helpful_stan_functions](https://github.com/spinkney/helpful_stan_functions)
+
+#This repository also references the sgt R package by Carter Davis:
+# Davis, C. (2015). sgt: Skewed Generalized T Distribution Tree. R package version 2.0. Retrieved from [https://CRAN.R-project.org/package=sgt](https://CRAN.R-project.org/package=sgt)
+# This distribution is highly flexible and encompasses a wide range of special cases,
+
+# The Skew Generalized T Distribution (SGT) is characterized by five parameters:
+# mu (location), sigma (scale), lambda (skewness), p, and q (kurtosis parameters).
+
+# Variance Adjustment Function
+# Adjusts the sigma (scale) parameter based on lambda, p, and q.
+# Ensures that the variance of the distribution remains consistent across different parameter values.
+# The function rejects parameter combinations where p * q <= 2, as they are invalid.
+
+# Mean Centering Function
+# Adjusts the mean of the distribution to be centered around mu.
+# Without this adjustment, mu represents the mode of the distribution.
+# The function rejects parameter combinations where p * q <= 1, as they are invalid.
+
+# Skew Generalized T Log Probability Density Function (Lpdf)
+# Calculates the log probability of data points x under the SGT distribution.
+# Integrates the adjusted variance and mean-centered functions for accurate probability calculations.
+# The distribution's flexibility allows it to model data with various skewness and kurtosis levels effectively.
+
+# Skew Generalized T Log Cumulative Distribution Function (Lcdf)
+# Computes the log cumulative probability up to a given point x under the SGT distribution.
+# Useful for determining probabilities of intervals and for cumulative analyses.
+
+# Additional variations, such as skew_t_lpdf and generalized_t_lpdf, are provided,
+# representing specific cases of the SGT distribution with certain parameter restrictions.
 
 stan_skew_generalized_t <- '
 real variance_adjusted_sgt(real sigma, real lambda, real p, real q) {
